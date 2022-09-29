@@ -1,3 +1,5 @@
+https://img.shields.io/github/license/adpro/municipal-budget-indicators-ck
+
 # municipal-budget-indicators-ck
 Calculation of municipal budget indicators for evaluating the financial stability of the city and for proposing the budget of the city of Česká Kamenice.
 

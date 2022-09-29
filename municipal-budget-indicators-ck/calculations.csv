@@ -1,0 +1,59 @@
+Číslo řádku;Zkratka;Název;Odkaz;Položka / Řádek;Početní operace
+1;;Daňové příjmy;FIN 2-12 M Třída 1;4010;
+2;;Nedaňové příjmy;FIN 2-12 M Třída 2;4020;
+3;41xx;Přijaté neinvestiční transfery;FIN 2-12 M Třída 4;; = 4111+4112+4116+4119+ 4121+4122+4123+4129+ 4151+4152+4153+4155+ 4156+4159+4160
+4;;Běžné příjmy;;; = ř. 1 + ř. 2 + ř. 3
+5;;Běžné výdaje;FIN 2-12 M Třída 5;4210;
+6;;Konsolidace výdajů;FIN 2-12 M;4250;
+7;;Konsolidované běžné výdaje;;; = ř. 5 – ř. 6
+8;;Kapitálové příjmy;FIN 2-12 M Třída 3;4030;
+9;;Celkové konsolidované příjmy;FIN 2-12 M;4200;
+10;VPCP;Podíl vlastních příjmů na celkových příjmech;;; = (ř. 1 + ř. 2 + ř. 8) / ř. 9
+11;;Celkové konsolidované výdaje;FIN 2-12 M;4430;
+12;RS;Rozpočtové saldo;;; = ( ř. 9 – ř. 11 ) / ř. 9
+13;;Saldo běžného rozpočtu;;; = ř. 4 – ř. 7
+14;5141;Placené úroky;FIN 2-12 M Výdaje;;součet položek 5141
+15;5178;Splátky leasingu;FIN 2-12 M Výdaje;;součet položek 5178
+16;6143;Investiční úroky;FIN 2-12 M Výdaje;;součet položek 6143
+17;CPBR;Čistý přebytek běžného rozpočtu;;; = ř. 13 + ř. 14 + ř. 15 + ř. 16
+18;SBR;Podíl přebytku běžného rozpočtu na běžných příjmech;;; = ř. 17 / ř. 4
+19;;Krátkodobý finanční majetek;Rozvaha;B.III.;
+20;;Dlouhodobé termínované vklady;Rozvaha;synt. úč. 068;
+21;BUKBV;Podíl finančních zůstatků na účtech a pokladně k běžným výdajům;;; = 12 * ( ř. 19 + ř. 20 ) / ř. 11
+22;BUKBP;Podíl finančních zůstatků na účtech a pokladně k běžným příjmům;;; = ( ř. 19 + ř. 20 ) / ř. 4
+23;KVBP;Celkové konsolidované výdaje na běžných příjmech;;; = ř. 11 / ř. 4
+24;;Kapitálové výdaje;FIN 2-12 M Třída 6;4220;
+25;;Odpisy dlouhodobého majetku;Výkaz zisku a ztráty;synt. úč. 551;
+26;URM;Udržitelná reprodukce majetku;;; = ř. 24 / ř. 25
+27;IA;Investiční aktivita;;; = ř. 24 / ( ř. 7 + ř. 24 )
+28;42xx;Investiční dotace;FIN 2-12 M Příjmy;; = 4211+4212+4213+4214+ 4216+4218+4219+4221+ 4222+4229+4231+4232+ 4233+4234+4235
+29;;Celkové kapitálové příjmy;;; = ř. 8 + ř. 28
+30;KSKV;Kapacita samofinancování kapitálových výdajů;;; = ( ř. 13 + ř. 29 ) / ř. 24
+31;SKR;Saldo kapitálového rozpočtu;;; = ř. 29 – ř. 24
+32;KPIT;Krytí kapitálových výdajů investičními transfery;;; = ř. 28 / ř. 24
+33;KVSBR;Podíl kapitálových výdajů na saldu běžného rozpočtu;;; = ř. 24 / ř. 13
+34;;Celkový dluh;Rozvaha;; = 281+282+283+289+322+ 326+362+451+452+453+ 456+459
+35;CDSBR;Podíl celkového dluhu na saldu běžného rozpočtu;;; = ř. 34 / ř. 13
+36;8xx2;Splátky emitovaných dluhopisů;FIN 2-12 M Financování;; = 8112+8122+8212+8222
+37;8xx4;Splátky jistin;FIN 2-12 M Financování;; = 8114+8124+8214+8224
+38;DSSBR;Podíl dluhové služby a dluhové kapacity;;; = ((( ř. 36 + ř. 37) * -1) + ř. 14 ) / ( ř. 13 – ř. 14 )
+39;PUSBR;Podíl placených úroků a dluhové kapacity;;; = ( ř. 14 ) / ( ř. 13 – ř. 14 )
+40;;Dluhová služba celkem;;; = ř. 14 + ř. 36 + ř. 37
+41;DSC;Ukazatel dluhové služby;;; = ř. 40 / ř. 9
+42;;Uhrazené splátky dlouhodobých vydaných dluhopisů;FIN 2-12 M Financování;8122;
+43;;Uhrazené splátky dlouhodobých přijatých půjčených prostředků;FIN 2-12 M Financování;8124;
+44;;Dluhová služba dlouhodobá;;; = -( ř. 42 + ř. 43 ) + ř. 14 + ř. 15 + ř. 16
+45;KDS;Krytí dluhové služby;;; = ř. 17 / ř. 44
+46;;Stálá aktiva;Rozvaha;A. netto;
+47;;Oběžná aktiva;Rozvaha;B. netto;
+48;;Aktiva celkem;;; = ř. 46 + ř. 47
+49;;Cizí zdroje;Rozvaha;D.;
+50;CZCA;Podíl cizích zdrojů k celkovým aktivům;;; = ř. 49 / ř. 48
+51;;Dlouhodobé přijaté zálohy na transfery;Rozvaha;"D.II.8.
+synt. účet 472";
+52;CZCA1;Podíl cizích zdrojů a celkových aktiv;;; = ( ř. 49 – ř. 51 ) / ř. 48
+53;;Krátkodobé závazky;Rozvaha;D.III.;
+54;CL;Celková/běžná likvidita;;; = ř. 47 / ř. 53
+55;OL;Okamžitá likvidita;;; = ř. 19 / ř. 53
+56;;Dlouhodobé závazky;Rozvaha;D.II.;
+57;FZ;Finanční zásoba;;; = ( ř. 19 + ř. 20 ) / ( ř. 53 + ř. 56 )

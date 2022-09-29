@@ -1,0 +1,15 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+requests = "*"
+plotly = "==5.9.0"
+kaleido = "*"
+dataclass-csv = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.10"
