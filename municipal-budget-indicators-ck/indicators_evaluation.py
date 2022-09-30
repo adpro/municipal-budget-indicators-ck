@@ -200,3 +200,30 @@ def eval_FZ(obj: FSO_MSK_Indicator):
         obj.score = 'B'
     else:
         obj.score = 'A'
+
+def evaluate_indicators(data):
+    eval_VPCP(data.VPCP)
+    eval_RS(data.RS, data.RS_RZD)
+    eval_CPBR(data.CPBR)
+    eval_SBR(data.SBR)
+    eval_BUKBV(data.BUKBV)
+    eval_BUKBP(data.BUKBP)
+    eval_KVBP(data.KVBP)
+
+    eval_URM(data.URM)
+    eval_IA(data.IA)
+    eval_KSKV(data.KSKV)
+    eval_SKR(data.SKR)
+    eval_KPIT(data.KPIT)
+
+    eval_CDSBR(data.CDSBR)
+    eval_DSSBR(data.DSSBR)
+    eval_PUSBR(data.PUSBR)
+    eval_DSC(data.DSC)
+    eval_KDS(data.KDS)
+    eval_CZCA(data.CZCA)
+    eval_CZCA1(data.CZCA1)
+
+    eval_CL(data.CL)
+    eval_OL(data.OL)
+    eval_FZ(data.FZ)
