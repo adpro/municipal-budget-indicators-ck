@@ -17,6 +17,7 @@ from decimal import Decimal
 from dataclasses import dataclass, fields
 from string import Template
 
+from download_data import download_statement
 from data_model import Year_Input_Data
 from extensions import EnhancedJSONEncoder, indicator_limits
 from indicators_model import FSO_MSK_Indicators, FSO_MSK_Indicator
@@ -520,6 +521,14 @@ if __name__ == "__main__":
 
     print(f"Using org id: {org_id}")
     print(f"Using years: {start_year}-{stop_year}")
+
+    ### SCRIPT 01 Download data
+    for year in list_years:
+        for code in statement_codes:
+            print(f"Downloading statement {code} for org id {org_id} in year {year}...")
+            not_exists_bool = download_statement(org_id, year, code)
+            if not not_exists_bool:
+                print(f'File exists, skipping...')
 
     indicators_years = {}
     for year in list_years:        
