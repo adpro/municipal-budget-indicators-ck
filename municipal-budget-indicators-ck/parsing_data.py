@@ -8,18 +8,25 @@ from data_model import Year_Input_Data
 
 
 # namespaces
-ns = {'soap': 'http://schemas.xmlsoap.org/soap/envelope/',
-    'res': 'urn:cz:mfcr:monitor:schemas:MonitorResponse:v1',
-    'fin212m': 'urn:cz:mfcr:monitor:schemas:MonitorFin212M:v1',
-    'roz': 'urn:cz:mfcr:monitor:schemas:MonitorRozvaha:v1',
-    'vzz': 'urn:cz:mfcr:monitor:schemas:MonitorVykazZiskuAZtrat:v1'
+ns = {'roz' : 'urn:cz:isvs:micr:schemas:Rozvaha:v1',
+    'vzz': 'urn:cz:isvs:micr:schemas:VykazZiskuAztrat:v1',
+    'fin212m': 'urn:cz:isvs:micr:schemas:Fin_2_12_m:v1',
+    'acc': 'urn:cz:isvs:micr:schemas:AccountTypes:v1',
+    'cmn': 'urn:cz:isvs:micr:schemas:CommonTypes:v1',
+    'bus': 'urn:cz:isvs:micr:schemas:BusinessTypes:v2',
+    'stm': 'urn:cz:isvs:micr:schemas:StatementTypes:v1'
 }
 
 def get_xml_root(org_id, main_year, statement_code):
-    filename = "{org_id}_{main_year}-12-31_{statement_code}.xml".format(
-        org_id=org_id, main_year=main_year, statement_code=statement_code
-    )
-    filepath = os.path.join('..','sample-data','pokladna',filename)
+    suffix = ""
+    if statement_code == '001':
+        suffix = 'CV1_Rozvaha'
+    elif statement_code == '002':
+        suffix = 'CV2_Vysledovka'
+    elif statement_code == '051':
+        suffix = 'Fin_2_12_M'
+    filename = f"{main_year}_R{statement_code}_{suffix}.xml"
+    filepath = os.path.join('..','sample-data','vera',filename)
 
     tree = ElementTree.parse(filepath)
     root = tree.getroot()
@@ -37,25 +44,25 @@ def get_decimal_value_from_FIN_XML(root, polozka, xpath):
 # Rozpocet
 def get_FIN_4xx0(root, polozka):
     #return Decimal(rootFIN.find('.//fin212m:RekapitulacePrijmyVydaje/fin212m:Radek[fin212m:RadekCislo="' + polozka + '"]', ns).find('fin212m:Vysledek', ns).text)
-    return get_decimal_value_from_FIN_XML(root, polozka, './/fin212m:RekapitulacePrijmyVydaje/fin212m:Radek[fin212m:RadekCislo="')
+    return get_decimal_value_from_FIN_XML(root, polozka, './/fin212m:RekapitulacePrijmyVydaje/fin212m:VykazRadek[fin212m:RadekCislo="')
 
 # returns sum of 5141
 def get_FIN_Vydaje_Sum(root, polozka):
     sum = Decimal('0.0')
-    for line in root.findall('.//fin212m:VydajeRozpoctove/fin212m:Radek[fin212m:Polozka="' + polozka + '"]',ns):
+    for line in root.findall('.//fin212m:VydajeRozpoctove/fin212m:VykazRadek[fin212m:Polozka="' + polozka + '"]',ns):
         sum+= Decimal(line.find('fin212m:Vysledek', ns).text)
     return sum
 
 # neivesticni transfery
 def get_FIN_41xx(root, polozka):
-    return get_decimal_value_from_FIN_XML(root, polozka, './/fin212m:PrijmyRozpoctove/fin212m:Radek[fin212m:Polozka="')
+    return get_decimal_value_from_FIN_XML(root, polozka, './/fin212m:PrijmyRozpoctove/fin212m:VykazRadek[fin212m:Polozka="')
 
 # prevody vlastnim uctum
 def get_FIN_534x(root, polozka):
-    return get_decimal_value_from_FIN_XML(root, polozka, './/fin212m:VydajeRozpoctove/fin212m:Radek[fin212m:Polozka="')
+    return get_decimal_value_from_FIN_XML(root, polozka, './/fin212m:VydajeRozpoctove/fin212m:VykazRadek[fin212m:Polozka="')
 
 def get_FIN_8xxx(root, radek):
-    return get_decimal_value_from_FIN_XML(root, radek, './/fin212m:Financovani/fin212m:Radek[fin212m:RadekCislo="')
+    return get_decimal_value_from_FIN_XML(root, radek, './/fin212m:Financovani/fin212m:VykazRadek[fin212m:RadekCislo="')
 
 # 8xx2 ['8112','8122','8212','8222']
 # 8x14 ['8114','8214']
@@ -155,31 +162,31 @@ def fill_data_with_FIN(root, data):
 
 
 def fill_data_with_ROZ(root, data):
-    data.roz_A_brutto = get_ROZ(root,'A.', './/res:VykazData/roz:Rozvaha/roz:Aktiva/roz:Radek[roz:Polozka="', 'roz:ObdobiBezneBrutto')
-    data.roz_B_brutto = get_ROZ(root,'B.', './/res:VykazData/roz:Rozvaha/roz:Aktiva/roz:Radek[roz:Polozka="', 'roz:ObdobiBezneBrutto')
-    data.roz_A_netto = get_ROZ(root,'A.', './/res:VykazData/roz:Rozvaha/roz:Aktiva/roz:Radek[roz:Polozka="', 'roz:ObdobiBezneNetto')
-    data.roz_B_netto = get_ROZ(root,'B.', './/res:VykazData/roz:Rozvaha/roz:Aktiva/roz:Radek[roz:Polozka="', 'roz:ObdobiBezneNetto')
-    data.roz_B_III = get_ROZ(root,'B.III.', './/res:VykazData/roz:Rozvaha/roz:Aktiva/roz:Radek[roz:Polozka="', 'roz:ObdobiBezneNetto')
-    data.roz_D = get_ROZ(root,'D.', './/res:VykazData/roz:Rozvaha/roz:Pasiva/roz:Radek[roz:Polozka="', 'roz:ObdobiBezne')
-    data.roz_D_II = get_ROZ(root,'D.II.', './/res:VykazData/roz:Rozvaha/roz:Pasiva/roz:Radek[roz:Polozka="', 'roz:ObdobiBezne')
-    data.roz_D_III = get_ROZ(root,'D.III.', './/res:VykazData/roz:Rozvaha/roz:Pasiva/roz:Radek[roz:Polozka="', 'roz:ObdobiBezne')
-    data.roz_472 = get_ROZ(root,'472', './/res:VykazData/roz:Rozvaha/roz:Pasiva/roz:Radek[roz:SyntetickyUcet="', 'roz:ObdobiBezne')
-    data.roz_068 = get_ROZ(root,'068', './/res:VykazData/roz:Rozvaha/roz:Aktiva/roz:Radek[roz:SyntetickyUcet="', 'roz:ObdobiBezneNetto')
+    data.roz_A_brutto = get_ROZ(root,'A.', './/roz:Aktiva/roz:Radek[roz:PolozkaCislo="', 'roz:ObdobiBezneBrutto')
+    data.roz_B_brutto = get_ROZ(root,'B.', './/roz:Aktiva/roz:Radek[roz:PolozkaCislo="', 'roz:ObdobiBezneBrutto')
+    data.roz_A_netto = get_ROZ(root,'A.', './/roz:Aktiva/roz:Radek[roz:PolozkaCislo="', 'roz:ObdobiBezneNetto')
+    data.roz_B_netto = get_ROZ(root,'B.', './/roz:Aktiva/roz:Radek[roz:PolozkaCislo="', 'roz:ObdobiBezneNetto')
+    data.roz_B_III = get_ROZ(root,'B.III.', './/roz:Aktiva/roz:Radek[roz:PolozkaCislo="', 'roz:ObdobiBezneNetto')
+    data.roz_D = get_ROZ(root,'D.', './/roz:Pasiva/roz:Radek[roz:PolozkaCislo="', 'roz:ObdobiBezne')
+    data.roz_D_II = get_ROZ(root,'D.II.', './/roz:Pasiva/roz:Radek[roz:PolozkaCislo="', 'roz:ObdobiBezne')
+    data.roz_D_III = get_ROZ(root,'D.III.', './/roz:Pasiva/roz:Radek[roz:PolozkaCislo="', 'roz:ObdobiBezne')
+    data.roz_472 = get_ROZ(root,'D.II.8.', './/roz:Pasiva/roz:Radek[roz:PolozkaCislo="', 'roz:ObdobiBezne')
+    data.roz_068 = get_ROZ(root,'A.III.5.', './/roz:Aktiva/roz:Radek[roz:PolozkaCislo="', 'roz:ObdobiBezneNetto')
     # synthetic
-    synt_path = './/res:VykazData/roz:Rozvaha/roz:Pasiva/roz:Radek[roz:SyntetickyUcet="'
+    synt_path = './/roz:Pasiva/roz:Radek[roz:PolozkaCislo="'
     synt_path2 = 'roz:ObdobiBezne'
-    data.roz_281 = get_ROZ(root,'281', synt_path, synt_path2)
-    data.roz_282 = get_ROZ(root,'282', synt_path, synt_path2 )
-    data.roz_283 = get_ROZ(root,'283', synt_path, synt_path2 )
-    data.roz_289 = get_ROZ(root,'289', synt_path, synt_path2 )
-    data.roz_322 = get_ROZ(root,'322', synt_path, synt_path2 )
-    data.roz_326 = get_ROZ(root,'326', synt_path, synt_path2 )
-    data.roz_362 = get_ROZ(root,'362', synt_path, synt_path2 )
-    data.roz_451 = get_ROZ(root,'451', synt_path, synt_path2 )
-    data.roz_452 = get_ROZ(root,'452', synt_path, synt_path2 )
-    data.roz_453 = get_ROZ(root,'453', synt_path, synt_path2 )
-    data.roz_456 = get_ROZ(root,'456', synt_path, synt_path2 )
-    data.roz_459 = get_ROZ(root,'459', synt_path, synt_path2 )
+    data.roz_281 = get_ROZ(root,'D.III.1.', synt_path, synt_path2)
+    data.roz_282 = get_ROZ(root,'D.III.2.', synt_path, synt_path2 )
+    data.roz_283 = get_ROZ(root,'D.III.3.', synt_path, synt_path2 )
+    data.roz_289 = get_ROZ(root,'D.III.4.', synt_path, synt_path2 )
+    data.roz_322 = get_ROZ(root,'D.III.6.', synt_path, synt_path2 )
+    data.roz_326 = get_ROZ(root,'D.III.9.', synt_path, synt_path2 )
+    data.roz_362 = get_ROZ(root,'D.III.27.', synt_path, synt_path2 )
+    data.roz_451 = get_ROZ(root,'D.II.1.', synt_path, synt_path2 )
+    data.roz_452 = get_ROZ(root,'D.II.2.', synt_path, synt_path2 )
+    data.roz_453 = get_ROZ(root,'D.II.3.', synt_path, synt_path2 )
+    data.roz_456 = get_ROZ(root,'D.II.5.', synt_path, synt_path2 )
+    data.roz_459 = get_ROZ(root,'D.II.7.', synt_path, synt_path2 )
 
 def fill_data_with_VZZ(root, data):
-    data.vzz_551 = get_VZZ(root,'551', './/res:VykazData/vzz:VykazZiskuAZtrat/vzz:Naklady/vzz:Radek[vzz:SyntetickyUcet="', 'vzz:ObdobiBezneCinnostHlavni')
+    data.vzz_551 = get_VZZ(root,'A.I.28.', './/vzz:Naklady/vzz:Radek[vzz:PolozkaCislo="', 'vzz:ObdobiBezneCinnostHlavni')

@@ -59,12 +59,13 @@ if __name__ == "__main__":
     print(f"Using years: {start_year}-{stop_year}")
 
     ### SCRIPT 01 Download data
-    for year in list_years:
-        for code in statement_codes:
-            print(f"Downloading statement {code} for org id {org_id} in year {year}...")
-            not_exists_bool = download_statement(org_id, year, code)
-            if not not_exists_bool:
-                print(f'File exists, skipping...')
+    # data is local, no download needed
+    # for year in list_years:
+    #     for code in statement_codes:
+    #         print(f"Downloading statement {code} for org id {org_id} in year {year}...")
+    #         not_exists_bool = download_statement(org_id, year, code)
+    #         if not not_exists_bool:
+    #             print(f'File exists, skipping...')
 
     indicators_years = {}
     for year in list_years:        
