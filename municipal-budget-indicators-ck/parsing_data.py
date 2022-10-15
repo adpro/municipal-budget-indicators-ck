@@ -17,17 +17,7 @@ ns = {'roz' : 'urn:cz:isvs:micr:schemas:Rozvaha:v1',
     'stm': 'urn:cz:isvs:micr:schemas:StatementTypes:v1'
 }
 
-def get_xml_root(org_id, main_year, statement_code):
-    suffix = ""
-    if statement_code == '001':
-        suffix = 'CV1_Rozvaha'
-    elif statement_code == '002':
-        suffix = 'CV2_Vysledovka'
-    elif statement_code == '051':
-        suffix = 'Fin_2_12_M'
-    filename = f"{main_year}_R{statement_code}_{suffix}.xml"
-    filepath = os.path.join('..','sample-data','vera',filename)
-
+def get_xml_root(filepath):
     tree = ElementTree.parse(filepath)
     root = tree.getroot()
     return root

@@ -285,10 +285,14 @@ class Year_Input_Data:
 
     # in %
     def CZCA(self) -> Decimal:
+        if self.calc_AC() == 0:
+            return -0
         return self.roz_D / self.calc_AC()
 
     # in %
     def CZCA1(self) -> Decimal:
+        if self.calc_AC() == 0:
+            return -0
         return (self.roz_D - self.roz_472) / self.calc_AC()
     
     # # in %
@@ -311,12 +315,18 @@ class Year_Input_Data:
 
     # index
     def CL(self) -> Decimal:
+        if self.roz_D_III == 0:
+            return -0
         return self.roz_B_netto / self.roz_D_III
 
     # index
     def OL(self) -> Decimal:
+        if self.roz_D_III == 0:
+            return -0
         return self.roz_B_III / self.roz_D_III
 
     # index
     def FZ(self) -> Decimal:
+        if (self.roz_D_III + self.roz_D_II) == 0:
+            return -0
         return (self.roz_B_III + self.roz_068) / (self.roz_D_III + self.roz_D_II)

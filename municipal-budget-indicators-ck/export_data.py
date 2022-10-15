@@ -37,6 +37,7 @@ def save_data_to_csv(org_id, year_start, year_stop, data):
             if issubclass(type(getattr(data[next(iter(data.keys()))], indicator.name)), FSO_MSK_Indicator):
                 line.insert(0, str(indicator.name))
             writer.writerow(line)
+    return filepath
 
 # ### SCRIPT 09 GRAPHS
 
@@ -217,8 +218,17 @@ def download_org_name(org: str, year: int):
     return org_name
 
 
-def generate_html_report(indicators, chart_files, org_id, org_name, uid, path) -> str:
+def generate_html_report(indicators, chart_files, org_id, org_name, uid, path, event) -> str:
     ind_def = FSO_MSK_Indicators_Definition()
+    
+    report_type = 'Neuvedeno'
+    if event == 'button_ro':
+        report_type = 'Rozpočtové opatření'
+    elif event == 'button_nr':
+        report_type = 'Návrh rozpočtu'
+    elif event == 'button_zu':
+        report_type = 'Závěrečný účet'
+    
     params = {}
     for name in indicators:
         report_ind_template = f'''
@@ -231,6 +241,7 @@ def generate_html_report(indicators, chart_files, org_id, org_name, uid, path) -
     params['org_name'] = org_name
     params['org_id'] = org_id
     params['create_date'] = date.today()
+    params['report_type'] = report_type
     report_path = generate_report_file(org_id, uid, path, params)
     return report_path
 
@@ -256,3 +267,4 @@ def save_csv_inputs(inputs, start_year, stop_year):
         w = DataclassWriter(f, inputs, Year_Input_Data)
         w.write()
     transpose_csv(filepath_csv, filepath_csv)
+    return filepath_csv

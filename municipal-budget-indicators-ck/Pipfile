@@ -5,9 +5,11 @@ name = "pypi"
 
 [packages]
 requests = "*"
-plotly = "==5.9.0"
+plotly = "==5.10.0"
 kaleido = "*"
 dataclass-csv = "*"
+pysimplegui = "*"
+openpyxl = "*"
 
 [dev-packages]
 
