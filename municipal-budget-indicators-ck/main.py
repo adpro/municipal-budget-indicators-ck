@@ -32,7 +32,7 @@ def show_main_menu():
                 [sg.T('Vyberte typ výpočtu:')],
                 [sg.Button('Rozpočtové opatření', key='button_ro'), sg.Button('Návrh rozpočtu', key='button_nr'), sg.Button('Závěrečný účet', key='button_zu')]
             ]
-    event, values = sg.Window(MAIN_WINDOW_TITLE, layout).read(close=True)
+    event, values = sg.Window(MAIN_WINDOW_TITLE, layout, enable_close_attempted_event=True).read(close=True)
     return event, values
 
 
@@ -88,7 +88,12 @@ if __name__ == "__main__":
     input_folder, output_folder, export_indicators, export_data = values[0], values[1], values['export_indicators'], values['export_data']
     # print(f'Input folder: {input_folder} \nOutput folder: {output_folder}')
 
-    if len(input_folder) == 0 or len(output_folder) == 0:
+    if event == 'WIN_CLOSED' or \
+        event == 'WINDOW_CLOSE_ATTEMPTED_EVENT' or \
+        event == '-WINDOW CLOSE ATTEMPTED-':
+        exit(0)
+
+    if len(str(input_folder)) == 0 or len(str(output_folder)) == 0:
         sg.popup("Chyba!",
             "Nebyly vybrány vstupná a/nebo výstupní složky.",
             "Program bude ukončen. Pro výpočet doplňte všechny parametry.",
@@ -101,7 +106,6 @@ if __name__ == "__main__":
             "Program bude ukončen.",
             title=MAIN_WINDOW_TITLE)
         exit(0)
-
 
     create_requirements(
         event, available_statement_codes
