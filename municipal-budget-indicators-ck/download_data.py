@@ -42,7 +42,7 @@ def download_statement(org_id: str, year: int, statement: str) -> bool:
     if not os.path.exists(filepath):
         # POST request
         response = requests.request("POST", url, headers=headers, data=payload.format(**vars))
-        with open(filepath, "w") as f:
+        with open(filepath, "w", encoding="utf8") as f:
             f.write(response.text)
         return True
     else:

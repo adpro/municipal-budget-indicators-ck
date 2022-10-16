@@ -183,10 +183,10 @@ def generate_charts(org_id, start_year, stop_year, data):
 def generate_report_file(org_id, uid, path, params):
     filename = f"{org_id}_{uid}_report.html"
     filepath = os.path.join(path, filename)
-    with open("indicators_complete_template.html") as t:
+    with open("indicators_complete_template.html", encoding="utf8") as t:
         template = Template(t.read())
         output = template.safe_substitute(params)
-        with open(filepath, "w") as fw:
+        with open(filepath, "w", encoding="utf8") as fw:
             fw.write(output)
     return filepath
 
@@ -249,12 +249,12 @@ def generate_html_report(indicators, chart_files, org_id, org_name, uid, path, e
 # ### calculation into csv file
 
 def transpose_csv(infile, outfile):
-    with open(infile) as f:
+    with open(infile, encoding="utf8") as f:
         reader = csv.reader(f)
         cols = []
         for row in reader:
             cols.append(row)
-    with open(outfile, 'w') as f:
+    with open(outfile, 'w', encoding="utf8") as f:
         writer = csv.writer(f, delimiter=';')
         for i in range(len(max(cols, key=len))):
             writer.writerow([(c[i] if i<len(c) else '') for c in cols])
@@ -263,7 +263,7 @@ def transpose_csv(infile, outfile):
 def save_csv_inputs(inputs, start_year, stop_year):
     filename = f'inputs_{start_year}_{stop_year}.csv'
     filepath_csv = os.path.join('..','sample-data','output',filename)        
-    with open(filepath_csv, "w") as f:
+    with open(filepath_csv, "w", encoding="utf8") as f:
         w = DataclassWriter(f, inputs, Year_Input_Data)
         w.write()
     transpose_csv(filepath_csv, filepath_csv)

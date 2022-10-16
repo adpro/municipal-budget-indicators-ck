@@ -76,7 +76,7 @@ def identify_xlsx_files(path, file, excel):
     # Define variable to read sheet
     df1 = dataframe.active
     name = df1['A2'].value
-    print(f'OpenPyXL header: {name}')
+    # print(f'OpenPyXL header: {name}')
 
     if "rozpoč" in name: # File header 'Návrh rozpočtu' or 'Schválený rozpočet'
         if len(excel.keys()) > 0 and str(list(excel.keys())[0]) in name and name.endswith(str(list(excel.keys())[0])): # year we looking for at the end
