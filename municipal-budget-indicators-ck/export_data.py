@@ -23,11 +23,11 @@ from indicators_definition import FSO_MSK_Indicators_Definition
 
 # ### SCRIPT 09 CSV
 
-def save_data_to_csv(org_id, year_start, year_stop, data):
+def save_data_to_csv(org_id, year_start, year_stop, data, output_folder):
     header = list(range(year_start, year_stop+1, 1))
     header.insert(0, "Indikátor")
     filename = f"{org_id}_{year_start}-{year_stop}_indicators.csv"
-    filepath = os.path.join('..','sample-data','output',filename)
+    filepath = os.path.join(output_folder,filename)
     with open(filepath, 'w', encoding='UTF8') as f:
         # create the csv writer
         writer = csv.writer(f)
@@ -172,9 +172,9 @@ def generate_chart(org_id, start_year, stop_year, input_list, indicator, dirpath
     return filepath
 
 
-def generate_charts(org_id, start_year, stop_year, data):
+def generate_charts(org_id, start_year, stop_year, data, output_folder):
     uid = uuid.uuid4()
-    dirpath = os.path.join('..','sample-data', 'output', str(uid))
+    dirpath = os.path.join(output_folder, str(uid))
     if not os.path.exists(dirpath):
         os.mkdir(dirpath)
     charts_filepath = {indicator:generate_chart(org_id, start_year, stop_year, data, indicator, dirpath) for indicator in data}
@@ -260,9 +260,9 @@ def transpose_csv(infile, outfile):
             writer.writerow([(c[i] if i<len(c) else '') for c in cols])
 
 
-def save_csv_inputs(inputs, start_year, stop_year):
+def save_csv_inputs(inputs, start_year, stop_year, output_folder):
     filename = f'inputs_{start_year}_{stop_year}.csv'
-    filepath_csv = os.path.join('..','sample-data','output',filename)        
+    filepath_csv = os.path.join(output_folder, filename)        
     with open(filepath_csv, "w", encoding="utf8") as f:
         w = DataclassWriter(f, inputs, Year_Input_Data)
         w.write()

@@ -211,23 +211,24 @@ if __name__ == "__main__":
         evaluate_indicators(inds) # replace line up
         indicators_years[year] = inds
 
-    # ### SCRIPT 09 CSV
-
-    if export_indicators:
-        fp = save_data_to_csv(org_id, start_year, stop_year, indicators_years) 
     # ### SCRIPT 09 CHARTS
 
     data_chart = process_indicators_years_data_to_indicators_data(indicators_years)
-    chart_files, dirpath, uid = generate_charts(org_id, start_year, stop_year, data_chart)
+    chart_files, dirpath, uid = generate_charts(org_id, start_year, stop_year, data_chart, output_folder)
     indicators = [name for name in data_chart.keys()]
     org_name = download_org_name(org_id, start_year)
     report_file = generate_html_report(indicators, chart_files, org_id, org_name, uid, dirpath, event)
     webbrowser.open_new_tab(f"file://" + os.path.realpath(report_file))
     print(f"Report: {report_file}")
 
+    # ### SCRIPT 09 CSV
+
+    if export_indicators:
+        fp = save_data_to_csv(org_id, start_year, stop_year, indicators_years, dirpath) 
+
     ### save source and calculation data to csv file
     if export_data:
-        fp_csv = save_csv_inputs(inputs, start_year, stop_year)
+        fp_csv = save_csv_inputs(inputs, start_year, stop_year, dirpath)
     
     sg.popup('Hotovo.', 
             f'HTML report je uložen v souboru {os.path.abspath(report_file)}.',
