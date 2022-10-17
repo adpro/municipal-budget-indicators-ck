@@ -1,5 +1,7 @@
 import dataclasses
 import json
+import os
+import sys
 from decimal import Decimal
 
 class EnhancedJSONEncoder(json.JSONEncoder):
@@ -35,3 +37,14 @@ indicator_limits = {
     'OL': [1.75, 1],
     'FZ': [0.5, 0.05],
 }
+
+# https://stackoverflow.com/questions/51060894/adding-a-data-file-in-pyinstaller-using-the-onefile-option
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path) 

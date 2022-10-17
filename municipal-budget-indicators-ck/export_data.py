@@ -16,7 +16,7 @@ from dataclasses import dataclass, fields
 from string import Template
 
 from data_model import Year_Input_Data
-from extensions import indicator_limits
+from extensions import indicator_limits, resource_path
 from indicators_model import FSO_MSK_Indicator
 from indicators_definition import FSO_MSK_Indicators_Definition
 
@@ -183,7 +183,11 @@ def generate_charts(org_id, start_year, stop_year, data, output_folder):
 def generate_report_file(org_id, uid, path, params):
     filename = f"{org_id}_{uid}_report.html"
     filepath = os.path.join(path, filename)
-    with open("indicators_complete_template.html", encoding="utf8") as t:
+    resource_file = "indicators_complete_template.html"
+    res_path = resource_path(resource_file)
+    if not os.path.exists(res_path):
+        res_path = resource_file
+    with open(res_path, encoding="utf8") as t:
         template = Template(t.read())
         output = template.safe_substitute(params)
         with open(filepath, "w", encoding="utf8") as fw:
