@@ -147,7 +147,7 @@ if __name__ == "__main__":
     all_dicts = {**required_years_xml_full, **required_years_xml_partial, **required_excel_file}
 
     # window = show_output_window()
-    show_output_window(3, "Vstupní data nalezeny.")
+    show_output_window(2, "Vstupní data nalezeny.")
 
     # print(f'Req Full: {required_years_xml_full} \nReq part: {required_years_xml_partial} \nExcel: {required_excel_file}')
     # print(f'All dicts: {all_dicts}')
@@ -159,7 +159,7 @@ if __name__ == "__main__":
     stop_year = max(all_dicts.keys())
 
     indicators_years = {}
-    progress = 4
+    progress = 3
     for year, files_dict  in all_dicts.items():
     # for year in list_years:        
     #     ### SCRIPT 03 PARSING
@@ -168,7 +168,6 @@ if __name__ == "__main__":
         # window.Refresh()
         show_output_window(progress, f"Zpracovávám data pro rok {year}...")
         progress += 1
-
 
         data = Year_Input_Data()
         data.year = main_year
@@ -236,13 +235,14 @@ if __name__ == "__main__":
         indicators_years[year] = inds
 
     # ### SCRIPT 09 CHARTS
-
+    
+    show_output_window(9, "Generuji grafy...")
     data_chart = process_indicators_years_data_to_indicators_data(indicators_years)
     chart_files, dirpath, uid = generate_charts(org_id, start_year, stop_year, data_chart, output_folder)
-    show_output_window(10, "Grafy vygenerovány.")
+    show_output_window(10, "Stahuji data o organizaci...")
     indicators = [name for name in data_chart.keys()]
     org_name = download_org_name(org_id, start_year)
-    show_output_window(11, "Informace o organizaci staženy.")
+    show_output_window(11, "Generuji HTML report...")
     report_file = generate_html_report(indicators, chart_files, org_id, org_name, uid, dirpath, event)
     show_output_window(12, "Vytvořen report soubor.")
     if open_browser:
@@ -252,13 +252,14 @@ if __name__ == "__main__":
     # ### SCRIPT 09 CSV
 
     if export_indicators:
+        show_output_window(13, "Exportuji indikátory do CSV...")
         fp = save_data_to_csv(org_id, start_year, stop_year, indicators_years, dirpath) 
-    show_output_window(13, "Export indikátorů dokončen.")
 
     ### save source and calculation data to csv file
     if export_data:
+        show_output_window(14, "Exportuji vstupních data...")
         fp_csv = save_csv_inputs(inputs, start_year, stop_year, dirpath)
-    show_output_window(14, "Export vstupních dat dokončen.")
+    
     
     if open_dir:
         open_folder(dirpath)
