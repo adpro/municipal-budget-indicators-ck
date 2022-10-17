@@ -268,7 +268,7 @@ class Year_Input_Data:
 
     # in %
     def URM(self) -> Decimal:
-        return (self.fin_4220 / self.vzz_551) if self.vzz_551 != 0 else 0
+        return (self.fin_4220 / self.vzz_551) if self.vzz_551 != 0 else Decimal('0.0')
 
     # in months
     def CDSBR(self) -> Decimal:
@@ -286,13 +286,13 @@ class Year_Input_Data:
     # in %
     def CZCA(self) -> Decimal:
         if self.calc_AC() == 0:
-            return -0
+            return Decimal('0.0')
         return self.roz_D / self.calc_AC()
 
     # in %
     def CZCA1(self) -> Decimal:
         if self.calc_AC() == 0:
-            return -0
+            return Decimal('0.0')
         return (self.roz_D - self.roz_472) / self.calc_AC()
     
     # # in %
@@ -306,7 +306,7 @@ class Year_Input_Data:
 
     # 
     def KDS(self) -> Decimal:
-        return (self.CPBR()*1000000 / self.calc_DSD()) if self.calc_DSD() > 0 else 0
+        return (self.CPBR()*1000000 / self.calc_DSD()) if self.calc_DSD() > 0 else Decimal('0.0')
 
 
     # # in %
@@ -316,17 +316,17 @@ class Year_Input_Data:
     # index
     def CL(self) -> Decimal:
         if self.roz_D_III == 0:
-            return -0
+            return Decimal('0.0')
         return self.roz_B_netto / self.roz_D_III
 
     # index
     def OL(self) -> Decimal:
         if self.roz_D_III == 0:
-            return -0
+            return Decimal('0.0')
         return self.roz_B_III / self.roz_D_III
 
     # index
     def FZ(self) -> Decimal:
         if (self.roz_D_III + self.roz_D_II) == 0:
-            return -0
+            return Decimal('0.0')
         return (self.roz_B_III + self.roz_068) / (self.roz_D_III + self.roz_D_II)

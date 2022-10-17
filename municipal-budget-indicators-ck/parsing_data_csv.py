@@ -38,10 +38,10 @@ def filter_input_xlsx_data(filepath):
                 or str(df1.cell(row, 1).value).strip().startswith('81') \
                 or str(df1.cell(row, 1).value).strip().startswith('82') \
             :
-                output.append([str(df1.cell(row, 1).value), df1.cell(row, 4).value*1000])
+                output.append([str(df1.cell(row, 1).value), Decimal(df1.cell(row, 4).value)*1000])
                 # print(f'{df1.cell(row, 1).value} {df1.cell(row, 4).value*1000}')
             else:
-                output.append([str(df1.cell(row, 2).value), df1.cell(row, 4).value*1000])
+                output.append([str(df1.cell(row, 2).value), Decimal(df1.cell(row, 4).value)*1000])
                 # print(f'{df1.cell(row, 2).value} {df1.cell(row, 4).value*1000}')
     # print(output)
     return output
@@ -49,7 +49,7 @@ def filter_input_xlsx_data(filepath):
 def get_FIN_item(input, item):
     items = filter(lambda x: x[0] in item, input)
     values = [x[1] for x in items]
-    return sum(values)
+    return Decimal(sum(values))
 
 def fill_xls_data_with_FIN(filepath, data):
     # print(f'XLS file: >>>{filepath}<<<')
