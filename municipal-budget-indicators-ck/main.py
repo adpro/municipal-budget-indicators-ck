@@ -1,5 +1,7 @@
 import argparse
 import os
+import platform
+import subprocess
 
 import PySimpleGUI as sg
 
@@ -29,6 +31,7 @@ def show_main_menu():
                 [sg.Text('Složka se vstupními soubory:', size=(25, 1)), sg.InputText(), sg.FolderBrowse(initial_folder=INITIAL_FOLDER_IN)],
                 [sg.Text('Složka pro výstupní soubory:', size=(25, 1)), sg.InputText(), sg.FolderBrowse(initial_folder=INITIAL_FOLDER_OUT)],
                 [sg.Checkbox('Export indikátorů do CSV', default=True, key='export_indicators'), sg.Checkbox('Export položek a řádků zdroje', default=True, key='export_data')],
+                [sg.Checkbox('Otevřít výstupní složku', default=True, key='open_dir'), sg.Checkbox('Otevřít výsledný report v prohlížeči', default=False, key='open_browser')],
                 [sg.T('Vyberte typ výpočtu:')],
                 [sg.Button('Rozpočtové opatření', key='button_ro'), sg.Button('Návrh rozpočtu', key='button_nr'), sg.Button('Závěrečný účet', key='button_zu')]
             ]
@@ -70,6 +73,14 @@ def show_output_window():
     window = sg.Window(MAIN_WINDOW_TITLE, layout, default_element_size=(30, 2))
     return window
 
+def open_folder(path):
+    if platform.system() == "Windows":
+        webbrowser.open(path)
+    elif platform.system() == "Darwin":
+        subprocess.Popen(["open", path])
+    else:
+        subprocess.Popen(["xdg-open", path])
+
 # #########
 #   MAIN
 # #########
@@ -85,7 +96,11 @@ if __name__ == "__main__":
     inputs = [] # list of input data of type Year_Input_Data
 
     event, values = show_main_menu()
-    input_folder, output_folder, export_indicators, export_data = values[0], values[1], values['export_indicators'], values['export_data']
+    input_folder, output_folder, \
+        export_indicators, export_data, \
+        open_dir, open_browser = values[0], values[1], \
+            values['export_indicators'], values['export_data'], \
+            values['open_dir'], values['open_browser']
     # print(f'Input folder: {input_folder} \nOutput folder: {output_folder}')
 
     if event == 'WIN_CLOSED' or \
@@ -218,7 +233,8 @@ if __name__ == "__main__":
     indicators = [name for name in data_chart.keys()]
     org_name = download_org_name(org_id, start_year)
     report_file = generate_html_report(indicators, chart_files, org_id, org_name, uid, dirpath, event)
-    webbrowser.open_new_tab(f"file://" + os.path.realpath(report_file))
+    if open_browser:
+        webbrowser.open_new_tab(f"file://" + os.path.realpath(report_file))
     print(f"Report: {report_file}")
 
     # ### SCRIPT 09 CSV
@@ -230,6 +246,9 @@ if __name__ == "__main__":
     if export_data:
         fp_csv = save_csv_inputs(inputs, start_year, stop_year, dirpath)
     
+    if open_dir:
+        open_folder(dirpath)
+
     sg.popup('Hotovo.', 
             f'HTML report je uložen v souboru {os.path.abspath(report_file)}.',
             f'Export indikátorů do csv: {"Ano" if export_indicators else "Ne"} {os.path.abspath(fp) if export_indicators else ""}',
