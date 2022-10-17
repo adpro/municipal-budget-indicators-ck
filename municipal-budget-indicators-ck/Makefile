@@ -14,15 +14,18 @@ OSFLAG :=
 ifeq ($(OS),Windows_NT)
 	DISTDIR=$(abspath ../dist-win)
 	OSFLAG += WIN
+	SEPARATOR=";"
 else
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Linux)
 		DISTDIR=$(abspath ../dist-linux)
 		OSFLAG += LINUX
+		SEPARATOR=":"
 	endif
 	ifeq ($(UNAME_S),Darwin)
 		DISTDIR=$(abspath ../dist-macos)
 		OSFLAG += MACOS
+		SEPARATOR=":"
 	endif
 endif
 
@@ -52,5 +55,5 @@ cleancache: ## Clean PyInstaller cache
 
 
 build: ## Make executable binary for OS system by PyInstaller
-	pyinstaller --name $(NAME) --distpath $(DISTDIR) --workpath $(BUILDDIR) --windowed -D $(SRCDIR)/main.py
+	pyinstaller -y --name $(NAME) --distpath $(DISTDIR) --workpath $(BUILDDIR) --windowed -D --add-data "indicators_complete_template.html$(SEPARATOR)." $(SRCDIR)/main.py
 
