@@ -2,6 +2,8 @@ import argparse
 import os
 import platform
 import subprocess
+import sys
+import traceback
 
 import PySimpleGUI as sg
 
@@ -67,11 +69,8 @@ def create_requirements(operation, statements_codes):
         fill_req_full_param(years, statements_codes)
     
 
-def show_output_window():
-    layout = [[sg.Output(size=(80, 20))],
-              [sg.Button('Zavřít', key="button_close_output")]]
-    window = sg.Window(MAIN_WINDOW_TITLE, layout, default_element_size=(30, 2))
-    return window
+def show_output_window(i, message):
+    sg.one_line_progress_meter(MAIN_WINDOW_TITLE, i, 13, message, key='progress1', orientation='h')
 
 def open_folder(path):
     if platform.system() == "Windows":
@@ -81,12 +80,17 @@ def open_folder(path):
     else:
         subprocess.Popen(["xdg-open", path])
 
+
+def exception_handler(exctype, value, tb):
+    show_output_window(15, " ")
+    sg.popup('Error!', exctype, value, traceback.extract_tb(tb), title=MAIN_WINDOW_TITLE)
+
 # #########
 #   MAIN
 # #########
 
 if __name__ == "__main__":
-
+    sys.excepthook = exception_handler
     required_years_xml_full = {}
     required_years_xml_partial = {}
     required_excel_file = {}
@@ -143,6 +147,7 @@ if __name__ == "__main__":
     all_dicts = {**required_years_xml_full, **required_years_xml_partial, **required_excel_file}
 
     # window = show_output_window()
+    show_output_window(3, "Vstupní data nalezeny.")
 
     # print(f'Req Full: {required_years_xml_full} \nReq part: {required_years_xml_partial} \nExcel: {required_excel_file}')
     # print(f'All dicts: {all_dicts}')
@@ -154,13 +159,16 @@ if __name__ == "__main__":
     stop_year = max(all_dicts.keys())
 
     indicators_years = {}
+    progress = 4
     for year, files_dict  in all_dicts.items():
-
     # for year in list_years:        
     #     ### SCRIPT 03 PARSING
         main_year = year
         print(f"Parsing xml data for org id {org_id} and year {main_year}...")
         # window.Refresh()
+        show_output_window(progress, f"Zpracovávám data pro rok {year}...")
+        progress += 1
+
 
         data = Year_Input_Data()
         data.year = main_year
@@ -185,6 +193,7 @@ if __name__ == "__main__":
         ### SCRIPT 05 CALCULATE INDICATORS
         print(f"For calculations using year: {main_year}")
         # window.Refresh()
+
 
         # process data into indicators
         #print("SBR v %: {:.2f}%".format(data.SBR()*100))
@@ -230,9 +239,12 @@ if __name__ == "__main__":
 
     data_chart = process_indicators_years_data_to_indicators_data(indicators_years)
     chart_files, dirpath, uid = generate_charts(org_id, start_year, stop_year, data_chart, output_folder)
+    show_output_window(10, "Grafy vygenerovány.")
     indicators = [name for name in data_chart.keys()]
     org_name = download_org_name(org_id, start_year)
+    show_output_window(11, "Informace o organizaci staženy.")
     report_file = generate_html_report(indicators, chart_files, org_id, org_name, uid, dirpath, event)
+    show_output_window(12, "Vytvořen report soubor.")
     if open_browser:
         webbrowser.open_new_tab(f"file://" + os.path.realpath(report_file))
     print(f"Report: {report_file}")
@@ -241,16 +253,21 @@ if __name__ == "__main__":
 
     if export_indicators:
         fp = save_data_to_csv(org_id, start_year, stop_year, indicators_years, dirpath) 
+    show_output_window(13, "Export indikátorů dokončen.")
 
     ### save source and calculation data to csv file
     if export_data:
         fp_csv = save_csv_inputs(inputs, start_year, stop_year, dirpath)
+    show_output_window(14, "Export vstupních dat dokončen.")
     
     if open_dir:
         open_folder(dirpath)
+    show_output_window(15, " ")
+
 
     sg.popup('Hotovo.', 
             f'HTML report je uložen v souboru {os.path.abspath(report_file)}.',
             f'Export indikátorů do csv: {"Ano" if export_indicators else "Ne"} {os.path.abspath(fp) if export_indicators else ""}',
             f'Export položek a řádků zdroje: {"Ano" if export_data else "Ne"} {os.path.abspath(fp_csv) if export_data else ""}',
             title=MAIN_WINDOW_TITLE)
+
