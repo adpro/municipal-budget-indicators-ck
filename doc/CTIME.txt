@@ -1,0 +1,119 @@
+VÝPOČET UKAZATELŮ FINANČNÍ STABILITY MĚSTA ČESKÁ KAMENICE
+(MUNICIPAL BUDGET INDICATORS for CK)
+================================================================================
+
+Účelem aplikace je z dodaných souborů vypočítat hodnoty ukazatelů pro hodnocení
+finanční stability města Česká Kamenice a jejich historii zobrazit v reportu
+s grafy za období posledních 6 let.
+
+
+JAK APLIKACI POUŽÍVAT
+---------------------
+Aplikace je distribuována z GitHubu jako ZIP soubor. Ten je třeba stáhnout 
+v konkrétní verzi. Po stažení rozbalte ZIP archiv, jehož obsahem je složka
+s název "mbi-ck". Uvnitř této složky se nalézá soubor se stejným jménem 
+"mbi-ck.exe". Spuštěním tohoto programu dojde k inicializaci programu. Následně
+se zobrazí úvodní okno programu.
+
+Úvodní okno programu obsahuje dvě vstupní pole. Pro složku, ve které máme 
+uložena vstupní data (XML soubory z IS VERA, případně xlsx pro návrh rozpočtu)
+a pro výstupní složku, do které bude program vypočtené indikátory, jejich grafy 
+a výslednou zprávu exportovat. Obě tyto složky musí existovat, program je sám
+nevytváří.
+Následuje řádek s volbami pro export vypočtených indikátorů a načtených položek 
+a řádků z výkazů FIN 2-12 M, Rozvaha a Výkaz zisku a ztráty. Pokud jsou 
+příslušná pole zatržena (výchozí volba), dojde k jejich exportu do CSV. Tyto
+soubory slouží zejména pro kontrolu výpočtu a kontrolu načtení dat ze vstupních
+formátů.
+Třetí řádek úvodního okna nabízí možnost otevření Průzkumníka ve složce, kam
+program vyexportoval data. Další volbou je otevření výsledného reportu v HTML
+formátu v prohlížeči.
+Následují tlačítka pro výběr typu výpočtu: Rozpočtové opatření, Návrh rozpočtu 
+a Závěrečný účet. Volbou jednoho z nich spustíme požadovaný výpočet.
+
+Po výběru výpočtu program zkontroluje, že ve vstupní složce má všechny soubory,
+aby provedl požadovaný typ výpočtu. Pokud program nenajde potřebné soubory,
+zobrazí okno s chybovým hlášením a ukončí se.
+Po kontrole vstupních dat je zobrazeno okno s ukazatelem postupu výpočtu.
+Ukazatel se po jednotlivých krocích výpočtu aktualizuje. Po skončení výpočtu je
+zobrazeno okno o výsledku, které obsahuje cesty v souborovém systému
+k výslednému reportu. Pokud byly zatrženy volby pro otevření Průzkumníka a nebo
+prohlížeče, jsou tyto programy otevřeny ve složce s výstupy programu resp. 
+s reportem v prohlížeči.
+
+Potvrzením tlačítka "OK" na závěrečném informačním okně o dokončení výpočtu je
+program definitivně ukončen. Ve výstupní složce je k dispozici po každém výpočtu 
+nová  podsložka, jejíž název je složen z globálního unikátního identifikátoru 
+(GUID) reprezentovaného jako 32 šestnáctkových číslic, zobrazených v 5 skupinách 
+oddělených spojovníky, ve tvaru 8-4-4-4-12 pro celkem 36 znaků 
+(32 alfanumerických znaků a 4 spojovníky). V této podsložce lze nalézt html 
+soubor s reportem, svg soubory s grafy a případně také csv soubory.
+
+
+FORMÁTY VSTUPNÍCH DAT
+---------------------
+XML - Jedná se o výstupy z IS VERA, které obsahují sestavy FIN 2-12 M, Rozvahu
+a výkaz zisku a ztráty ve formátu určeném pro Centrální systém účetních
+informací státu.
+
+XLSX (Office Open XML) - formát z Excelu 2007 a novějšího obsahující návrh
+rozpočtu na následující rok ve formátu předávaném do zastupitelstva dle
+odvětvového třídění.
+
+
+FORMÁTY VÝSTUPNÍCH DAT
+----------------------
+HTML - výsledný report s ukazateli a grafy
+SVG - soubory s vektorovou grafikou obsahující grafy v daném období pro import
+do html souboru
+CSV - výstup s indikátory a vstupními položkami a řádky
+
+
+NUTNÉ SOUBORY PRO JEDNOTLIVÉ VÝPOČTY
+------------------------------------
+
+Rozpočtové opatření
+~~~~~~~~~~~~~~~~~~~
+XML soubory za posledních kompletních 5 let
+XLSX soubor s návrhem RO
+
+Návrh rozpočtu
+~~~~~~~~~~~~~~
+XML soubory za poslední kompletní 4 roky
+XML soubory za 9 měsíců aktuálního roku
+XLSX soubor s návrhem rozpočtu roku následujícího
+
+Závěrečný účet
+~~~~~~~~~~~~~~
+XML soubory za posledních kompletních 6 let
+
+
+SYSTÉMOVÉ POŽADAVKY
+-------------------
+Windows 10 build 17074 a novější (vydání leden 2018 a novější).
+
+
+TECHNICKÉ INFORMACE O APLIKACI
+------------------------------
+Jednotlivé verze jsou k dispozici na adrese 
+https://github.com/adpro/municipal-budget-indicators-ck/releases/.
+
+Program je vytvořen v jazyce Python, otestován na verzi 3.10.2. Pro správu
+knihoven je použit nástroj pipenv, díky čemuž je přehled potřebných
+knihoven k dispozici v souboru ./municipal-budget-indicators-ck/Pipfile.
+Pro překlad pro OS Windows je využita knihovna PyInstaller. Výstupem překladu
+je složka mbi-ck s přeloženými soubory pro běhové prostředí python a exe soubor,
+kterým se spouští aplikace.
+
+Pro běh aplikace není nutná žádná instalace, běhové prostředí (runtime) pythonu,
+veškeré knihovny a nástroje nutné pro běh aplikace jsou součástí celého balíku
+aplikace. Při spuštění exe souboru dojde k rozbalení python runtime do paměti a
+spuštění aplikace v tomto dočasném běhovém prostředí, které je po ukončení
+aplikace z paměti opět vymazáno. Bližší informace lze najít na stránce
+projektu PyInstaller https://pyinstaller.org/en/stable/operating-mode.html
+#how-the-one-folder-program-works.
+
+
+LICENCE
+-------
+Tento software je šířen pod licencí Apache License 2.0, viz soubor LICENSE.
