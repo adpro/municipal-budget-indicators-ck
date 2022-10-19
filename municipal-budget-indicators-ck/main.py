@@ -197,12 +197,12 @@ if __name__ == "__main__":
         # process data into indicators
         #print("SBR v %: {:.2f}%".format(data.SBR()*100))
         inds = FSO_MSK_Indicators(
-            FSO_MSK_Indicator(data.VPCP()),
             FSO_MSK_Indicator(data.RS()),
             FSO_MSK_Indicator(data.SBR()),
             FSO_MSK_Indicator(data.BUKBV()),
             FSO_MSK_Indicator(data.BUKBP()),
             FSO_MSK_Indicator(data.KVBP()),
+            FSO_MSK_Indicator(data.VPCP()),
             FSO_MSK_Indicator(data.CPBR()),
             FSO_MSK_Indicator(data.URM()),
             FSO_MSK_Indicator(data.IA()),
@@ -235,7 +235,7 @@ if __name__ == "__main__":
         indicators_years[year] = inds
 
     # ### SCRIPT 09 CHARTS
-    
+
     show_output_window(9, "Generuji grafy...")
     data_chart = process_indicators_years_data_to_indicators_data(indicators_years)
     chart_files, dirpath, uid = generate_charts(org_id, start_year, stop_year, data_chart, output_folder)
