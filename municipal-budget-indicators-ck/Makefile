@@ -4,6 +4,7 @@ mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 BUILDDIR=$(abspath ../build)
 SRCDIR=$(abspath .)
+DOCDIR=$(abspath ../doc)
 
 
 # Detect operating system in Makefile.
@@ -14,18 +15,18 @@ OSFLAG :=
 ifeq ($(OS),Windows_NT)
 	DISTDIR=$(abspath ../dist-win)
 	OSFLAG += WIN
-	SEPARATOR=";"
+	SEPARATOR=;
 else
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Linux)
 		DISTDIR=$(abspath ../dist-linux)
 		OSFLAG += LINUX
-		SEPARATOR=":"
+		SEPARATOR=:
 	endif
 	ifeq ($(UNAME_S),Darwin)
 		DISTDIR=$(abspath ../dist-macos)
 		OSFLAG += MACOS
-		SEPARATOR=":"
+		SEPARATOR=:
 	endif
 endif
 
@@ -55,5 +56,5 @@ cleancache: ## Clean PyInstaller cache
 
 
 build: ## Make executable binary for OS system by PyInstaller
-	pyinstaller -y --name $(NAME) --distpath $(DISTDIR) --workpath $(BUILDDIR) --windowed -D --add-data "indicators_complete_template.html$(SEPARATOR)." $(SRCDIR)/main.py
+	pyinstaller -y --name $(NAME) --distpath $(DISTDIR) --workpath $(BUILDDIR) --windowed -D --add-data "indicators_complete_template.html$(SEPARATOR)." --add-data "$(DOCDIR)/CTIME.txt$(SEPARATOR)." $(SRCDIR)/main.py
 
