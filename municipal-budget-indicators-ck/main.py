@@ -221,7 +221,9 @@ if __name__ == "__main__":
             FSO_MSK_Indicator(data.OL()),
             FSO_MSK_Indicator(data.FZ()),
             # helpers
-            data.RS_RZD()
+            data.RS_RZD(),
+            data.year,
+            data.organization_id
         )
 
         inputs.append(data)

@@ -46,9 +46,9 @@ def filter_input_xlsx_data(filepath):
     # print(output)
     return output
 
-def get_FIN_item(input, item):
+def get_FIN_item(input, item) -> Decimal:
     items = filter(lambda x: x[0] in item, input)
-    values = [x[1] for x in items]
+    values = [Decimal(x[1]) for x in items]
     return Decimal(sum(values))
 
 def fill_xls_data_with_FIN(filepath, data):
