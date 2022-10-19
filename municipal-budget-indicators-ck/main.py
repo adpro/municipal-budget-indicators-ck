@@ -18,8 +18,8 @@ from export_data import *
 from data_model import Year_Input_Data
 from indicators_model import FSO_MSK_Indicators, FSO_MSK_Indicator
 
-
-MAIN_WINDOW_TITLE = 'Indikátory rozpočtu v0.1'
+VERSION = '1.0.0'
+MAIN_WINDOW_TITLE = f'Ukazatelé rozpočtu v{VERSION}'
 min_length = 8
 INITIAL_FOLDER_IN = os.getcwd()
 INITIAL_FOLDER_OUT = os.getcwd()

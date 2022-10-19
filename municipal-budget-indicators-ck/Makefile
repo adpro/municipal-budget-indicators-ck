@@ -5,6 +5,7 @@ current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 BUILDDIR=$(abspath ../build)
 SRCDIR=$(abspath .)
 DOCDIR=$(abspath ../doc)
+ROOTDIR=$(abspath ../)
 
 
 # Detect operating system in Makefile.
@@ -56,5 +57,5 @@ cleancache: ## Clean PyInstaller cache
 
 
 build: ## Make executable binary for OS system by PyInstaller
-	pyinstaller -y --name $(NAME) --distpath $(DISTDIR) --workpath $(BUILDDIR) --windowed -D --add-data "indicators_complete_template.html$(SEPARATOR)." --add-data "$(DOCDIR)/CTIME.txt$(SEPARATOR)." $(SRCDIR)/main.py
+	pyinstaller -y --name $(NAME) --distpath $(DISTDIR) --workpath $(BUILDDIR) --windowed -D --add-data "indicators_complete_template.html$(SEPARATOR)." --add-data "$(DOCDIR)/CTIME.txt$(SEPARATOR)." --add-data "$(ROOTDIR)/CHANGELOG.md$(SEPARATOR)." $(SRCDIR)/main.py
 
