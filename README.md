@@ -58,7 +58,7 @@ Run `main.py` script:
 ```
 $ python main.py
 ```
-App window appears. Select input and output folders:
+App window appears. Select input and output folders (last ones are inserted):
 ![Initial window of tool](./doc/window_1.png)
 Select options you like or skip this step to next one.
 Select one of buttons. If you exported data according this tutorial, choose 'Závěrečný účet'.

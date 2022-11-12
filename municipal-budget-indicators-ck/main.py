@@ -9,6 +9,8 @@ import PySimpleGUI as sg
 
 from datetime import date
 
+from loguru import logger
+
 from download_data import download_statement
 from requirements import *
 from parsing_data import *
@@ -18,7 +20,7 @@ from export_data import *
 from data_model import Year_Input_Data
 from indicators_model import FSO_MSK_Indicators, FSO_MSK_Indicator
 
-VERSION = '1.0.0'
+VERSION = '1.1.0'
 MAIN_WINDOW_TITLE = f'Ukazatelé rozpočtu v{VERSION}'
 min_length = 8
 INITIAL_FOLDER_IN = os.getcwd()
@@ -28,16 +30,20 @@ if len(str(os.environ.get('MUNICIPAL_BUDGET_INPUT'))) > min_length and len(str(o
     INITIAL_FOLDER_OUT = os.environ.get('MUNICIPAL_BUDGET_OUTPUT')
 
 def show_main_menu():
+    conf_input = sg.user_settings_get_entry('-input_folder-', '')
+    conf_output = sg.user_settings_get_entry('-output_folder-', '')
     layout =  [
                 [sg.T('Výpočet indikátorů rozpočtu', font='Liberation_Serif 16')],
-                [sg.Text('Složka se vstupními soubory:', size=(25, 1)), sg.InputText(), sg.FolderBrowse(initial_folder=INITIAL_FOLDER_IN)],
-                [sg.Text('Složka pro výstupní soubory:', size=(25, 1)), sg.InputText(), sg.FolderBrowse(initial_folder=INITIAL_FOLDER_OUT)],
+                [sg.Text('Složka se vstupními soubory:', size=(25, 1)), sg.InputText(conf_input, key='-IN-'), sg.FolderBrowse(initial_folder=INITIAL_FOLDER_IN)],
+                [sg.Text('Složka pro výstupní soubory:', size=(25, 1)), sg.InputText(conf_output, key='-OUT-'), sg.FolderBrowse(initial_folder=INITIAL_FOLDER_OUT)],
                 [sg.Checkbox('Export indikátorů do CSV', default=True, key='export_indicators'), sg.Checkbox('Export položek a řádků zdroje', default=True, key='export_data')],
                 [sg.Checkbox('Otevřít výstupní složku', default=True, key='open_dir'), sg.Checkbox('Otevřít výsledný report v prohlížeči', default=False, key='open_browser')],
                 [sg.T('Vyberte typ výpočtu:')],
                 [sg.Button('Rozpočtové opatření', key='button_ro'), sg.Button('Návrh rozpočtu', key='button_nr'), sg.Button('Závěrečný účet', key='button_zu')]
             ]
     event, values = sg.Window(MAIN_WINDOW_TITLE, layout, enable_close_attempted_event=True).read(close=True)
+    sg.user_settings_set_entry('-input_folder-',values['-IN-'])
+    sg.user_settings_set_entry('-output_folder-',values['-OUT-'])
     return event, values
 
 
@@ -90,6 +96,12 @@ def exception_handler(exctype, value, tb):
 # #########
 
 if __name__ == "__main__":
+    logger.remove()
+    logger.add(sys.stderr, format="{time} {level} {message}", level="WARNING")
+    logger.add(sys.stdout, colorize=True, format="<green>{time}</green> <level>{message}</level>", level="INFO")
+    logger.add("trace.log", backtrace=True, diagnose=True, rotation="1 day", retention="1 day", level="TRACE")  # Caution, may leak sensitive data
+    logger.add("last.log", rotation="1 day", retention="1 day", enqueue=True, level="DEBUG")
+
     sys.excepthook = exception_handler
     required_years_xml_full = {}
     required_years_xml_partial = {}
@@ -102,55 +114,56 @@ if __name__ == "__main__":
     event, values = show_main_menu()
     input_folder, output_folder, \
         export_indicators, export_data, \
-        open_dir, open_browser = values[0], values[1], \
+        open_dir, open_browser = values['-IN-'], values['-OUT-'], \
             values['export_indicators'], values['export_data'], \
             values['open_dir'], values['open_browser']
-    # print(f'Input folder: {input_folder} \nOutput folder: {output_folder}')
+    logger.trace(f'Input folder: {input_folder} \nOutput folder: {output_folder}')
 
     if event == 'WIN_CLOSED' or \
         event == 'WINDOW_CLOSE_ATTEMPTED_EVENT' or \
-        event == '-WINDOW CLOSE ATTEMPTED-':
-        exit(0)
+        event == '-WINDOW CLOSE ATTEMPTED-' or \
+        event == 'exit':
+        sys.exit(0)
 
     if len(str(input_folder)) == 0 or len(str(output_folder)) == 0:
         sg.popup("Chyba!",
             "Nebyly vybrány vstupná a/nebo výstupní složky.",
             "Program bude ukončen. Pro výpočet doplňte všechny parametry.",
             title=MAIN_WINDOW_TITLE)
-        exit(1)
+        sys.exit(1)
 
     if event == 'button_ro':
         sg.popup("Funkce není dosud implementována.",
             "Litujeme, ale zvolili jste výpočet, který tento program zatím neumí spočítat.",
             "Program bude ukončen.",
             title=MAIN_WINDOW_TITLE)
-        exit(0)
+        sys.exit(0)
 
     create_requirements(
         event, available_statement_codes
     )
 
-    # print(f'Req Full: {required_years_xml_full} \nReq part: {required_years_xml_partial} \nExcel: {required_excel_file}')
+    logger.trace(f'Req Full: {required_years_xml_full} \nReq part: {required_years_xml_partial} \nExcel: {required_excel_file}')
 
     ok, org_id = find_required_files(input_folder,
                              required_years_xml_full,
                              required_years_xml_partial,
                              required_excel_file)
-    print(f'All needed files: {ok}')
+    logger.info(f'All needed files: {ok}')
     if not ok:
         sg.popup('Ve vstupním adresáři nebyly nalezeny veškeré soubory nutné k výpočtu podle zvolené operace.', 
                 'Doplňte chybějící soubory.',
                 'Případně potřebné XML soubory mají různé IČO.',
                 title="Chyba vstupních dat")
-        exit(1)
+        sys.exit(1)
 
     all_dicts = {**required_years_xml_full, **required_years_xml_partial, **required_excel_file}
 
     # window = show_output_window()
     show_output_window(2, "Vstupní data nalezeny.")
 
-    # print(f'Req Full: {required_years_xml_full} \nReq part: {required_years_xml_partial} \nExcel: {required_excel_file}')
-    # print(f'All dicts: {all_dicts}')
+    logger.trace(f'Req Full: {required_years_xml_full} \nReq part: {required_years_xml_partial} \nExcel: {required_excel_file}')
+    logger.trace(f'All dicts: {all_dicts}')
 
     # input variables
     # org_id = '00261220' # CK
@@ -164,7 +177,7 @@ if __name__ == "__main__":
     # for year in list_years:        
     #     ### SCRIPT 03 PARSING
         main_year = year
-        print(f"Parsing xml data for org id {org_id} and year {main_year}...")
+        logger.info(f"Parsing xml data for org id {org_id} and year {main_year}...")
         # window.Refresh()
         show_output_window(progress, f"Zpracovávám data pro rok {year}...")
         progress += 1
@@ -190,12 +203,12 @@ if __name__ == "__main__":
 
 
         ### SCRIPT 05 CALCULATE INDICATORS
-        print(f"For calculations using year: {main_year}")
+        logger.info(f"For calculations using year: {main_year}")
         # window.Refresh()
 
 
         # process data into indicators
-        #print("SBR v %: {:.2f}%".format(data.SBR()*100))
+        #logger.trace("SBR v %: {:.2f}%".format(data.SBR()*100))
         inds = FSO_MSK_Indicators(
             FSO_MSK_Indicator(data.RS()),
             FSO_MSK_Indicator(data.SBR()),
@@ -230,7 +243,7 @@ if __name__ == "__main__":
 
         # ### SCRIPT 07 EVALUATE INDICATORS
 
-        print(f"Evaluating indicators for year: {main_year}")
+        logger.info(f"Evaluating indicators for year: {main_year}")
         # window.Refresh()
 
         evaluate_indicators(inds) # replace line up
@@ -249,7 +262,7 @@ if __name__ == "__main__":
     show_output_window(12, "Vytvořen report soubor.")
     if open_browser:
         webbrowser.open_new_tab(f"file://" + os.path.realpath(report_file))
-    print(f"Report: {report_file}")
+    logger.info(f"Report: {report_file}")
 
     # ### SCRIPT 09 CSV
 

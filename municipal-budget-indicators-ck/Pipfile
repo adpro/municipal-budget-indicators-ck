@@ -10,6 +10,7 @@ kaleido = "*"
 dataclass-csv = "*"
 pysimplegui = "*"
 openpyxl = "*"
+loguru = "*"
 
 [dev-packages]
 pyinstaller = "*"

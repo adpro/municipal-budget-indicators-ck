@@ -4,10 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2022-11-12
+### Added
+- Using user settings file for remembering input and output folders
+### Fixed
+- Error after closing window without calculation action
+### Internal
+- Add logging via loguru
 
 ## [1.0.0] - 2022-10-20
 ### Added
-- Calculation of budget proposal for new year from Office Open XML format and IS VERA XML exports of statements 001, 002 and 051.
+- Calculation of budget proposal for new year from Office Open XML format and IS VERA XML exports of statements 001, 002 and 051
 - Calculation of closed municipal budgets for last years from IS VERA XML exports
 - Support of IS VERA XML files used to send public finance information into Monitor (Complete overview of public finance)
 - Support of Office Open XML format in specific format for City of Česká Kamenice Board and Council.
@@ -25,7 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Window with result information
 - HTML template with final results
 - Documentation in CTIME.txt for Czech non-developer users and in README.md
-
 
 ### Internal
 - Apache 2.0 license
