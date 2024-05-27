@@ -193,7 +193,8 @@ def generate_charts(org_id, start_year, stop_year, data, output_folder):
 def generate_report_file(org_id, uid, path, params):
     filename = f"{org_id}_{uid}_report.html"
     filepath = os.path.join(path, filename)
-    resource_file = "indicators_complete_template.html"
+    module_path = os.path.dirname(os.path.realpath(__file__))
+    resource_file = os.path.join("indicators_complete_template.html")
     res_path = resource_path(resource_file)
     if not os.path.exists(res_path):
         res_path = resource_file
