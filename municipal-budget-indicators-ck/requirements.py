@@ -6,6 +6,8 @@ from datetime import date
 
 import openpyxl as xl
 
+from loguru import logger
+
 @dataclass
 class Header:
     filename: str = None
@@ -86,7 +88,10 @@ def identify_xlsx_files(path, file, excel):
 def find_required_files(path, xml_full, xml_part, excel):
     xml_files = [x for x in os.listdir(path) if x.endswith('.xml')]
     xlsx_files = [x for x in os.listdir(path) if x.endswith('.xlsx')]
-    
+
+    logger.trace(f'xml files: {xml_files} \nxlsx_files: {xlsx_files}')
+
+
     headers = []
     for file in xml_files:
         headers.append(identify_xml_file(path, file, xml_full, xml_part))
@@ -99,23 +104,23 @@ def find_required_files(path, xml_full, xml_part, excel):
         if len(header) == 0:
             header = h.org
         if header != h.org:
-            return False
+            return False, None
     for key, value in xml_full.items():
         if not isinstance(value, dict):
-            return False
+            return False, None
         for k, v in value.items():
             if not isinstance(v, str) or not v.endswith('.xml'):
-                return False
+                return False, None
     for key, value in xml_part.items():
         if not isinstance(value, dict):
-            return False
+            return False, None
         for k, v in value.items():
             if not isinstance(v, str) or not v.endswith('.xml'):
-                return False
+                return False, None
     for key, value in excel.items():
         if not isinstance(value, dict):
-            return False
+            return False, None
         for k, v in value.items():
             if not isinstance(v, str) or not v.endswith('.xlsx'):
-                return False
+                return False, None
     return True, headers[0].org
