@@ -7,6 +7,8 @@ import csv
 import uuid
 import webbrowser
 
+from loguru import logger
+
 from dataclass_csv import DataclassWriter
 
 from xml.etree import ElementTree
@@ -49,16 +51,19 @@ colour_error = 'rgb(153,153,153)'
 
 def process_indicators_years_data_to_indicators_data(input_data: dataclass) -> dict:
     target_data = {}
+    logger.trace(f'process_indicators_years_data_to_indicators_data: {input_data} \n')
     for indicator in fields(next(iter(input_data.values()))): 
 
         lst = []
         for year in input_data.keys():
+            logger.trace(f'process_indicators_years_data_to_indicators_data: year: {year} \n')
             # print(f'{indicator.name} {issubclass(type(getattr(input_data[year], indicator.name)), FSO_MSK_Indicator)} {type(getattr(input_data[year], indicator.name))}')
             if(issubclass(type(getattr(input_data[year], indicator.name)), FSO_MSK_Indicator)):
                 lst.append(vars(getattr(input_data[year], indicator.name)))
         # indicator_data = [vars(getattr(input_data[year], indicator.name)) for year in input_data.keys() if issubclass(type(getattr(input_data[year], indicator.name)), FSO_MSK_Indicator)]
         if issubclass(type(getattr(input_data[next(iter(input_data.keys()))], indicator.name)), FSO_MSK_Indicator):
             target_data[indicator.name] = lst #indicator_data
+    logger.trace(f'process_indicators_years_data_to_indicators_data end\n')
     return target_data
 
 
@@ -158,6 +163,7 @@ def get_decimal_indicator_limits(indicator):
     return dec_ind_limits
 
 def generate_chart(org_id, start_year, stop_year, input_list, indicator, dirpath):
+    logger.trace(f'generate_chart: {org_id}, {start_year}, {stop_year}, **{input_list}**, {indicator}, {dirpath} \n')
     ind_def = FSO_MSK_Indicators_Definition()
     zero_based = True if ind_def.__dataclass_fields__[indicator].default.zero_based == True else False
     y = 0 if zero_based == False else 1
@@ -167,17 +173,21 @@ def generate_chart(org_id, start_year, stop_year, input_list, indicator, dirpath
     dec_ind_limits = get_decimal_indicator_limits(indicator)
     ind_ok = [dec_ind_limits[0+y] for x in range(2)]
     ind_good = [dec_ind_limits[1+y] for x in range(2)]
+    logger.trace(f'create_chart: **{fsm_inds}**, {years}, {chart_colours}, {indicator}, {ind_ok}, {ind_good}, {start_year}, {stop_year},  {dirpath}, {zero_based} \n')
     filepath = create_chart(fsm_inds, years, chart_colours, indicator, ind_ok, ind_good, 
                             start_year, stop_year, dirpath, zero_based)
+    logger.trace(f'generate_chart end \n')
     return filepath
 
 
 def generate_charts(org_id, start_year, stop_year, data, output_folder):
+    logger.trace(f'generate_charts: {org_id}, {start_year}, {stop_year}, **{data}**, {output_folder} \n')
     uid = uuid.uuid4()
     dirpath = os.path.join(output_folder, str(uid))
     if not os.path.exists(dirpath):
         os.mkdir(dirpath)
     charts_filepath = {indicator:generate_chart(org_id, start_year, stop_year, data, indicator, dirpath) for indicator in data}
+    logger.trace(f'generate_charts end\n')
     return charts_filepath, dirpath, uid
 
 def generate_report_file(org_id, uid, path, params):
