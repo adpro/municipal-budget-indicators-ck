@@ -25,6 +25,7 @@ MAIN_WINDOW_TITLE = f'Ukazatelé rozpočtu v{VERSION}'
 min_length = 8
 INITIAL_FOLDER_IN = os.getcwd()
 INITIAL_FOLDER_OUT = os.getcwd()
+REPORT_YEARS = 6    # length of report
 if len(str(os.environ.get('MUNICIPAL_BUDGET_INPUT'))) > min_length and len(str(os.environ.get('MUNICIPAL_BUDGET_OUTPUT'))) > min_length:
     INITIAL_FOLDER_IN = os.environ.get('MUNICIPAL_BUDGET_INPUT')
     INITIAL_FOLDER_OUT = os.environ.get('MUNICIPAL_BUDGET_OUTPUT')
@@ -62,16 +63,16 @@ def create_requirements(operation, statements_codes):
     current_year = date.today().year
 
     if operation == 'button_ro':
-        years = list(range(current_year-5, current_year))
+        years = list(range(current_year-(REPORT_YEARS-1), current_year))
         fill_req_full_param(years, statements_codes)
         required_excel_file[current_year] = {}
     elif operation == 'button_nr':
-        years = list(range(current_year-4, current_year+1))
+        years = list(range(current_year-(REPORT_YEARS-2), current_year+1))
         fill_req_full_param(years[:-1], statements_codes)
         required_years_xml_partial[years[-1]] = {}
         required_excel_file[current_year+1] = {}
     else: # button_zu, default
-        years = list(range(current_year-6, current_year))
+        years = list(range(current_year-(REPORT_YEARS), current_year))
         fill_req_full_param(years, statements_codes)
     
 
