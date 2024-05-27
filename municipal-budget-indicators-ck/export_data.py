@@ -151,8 +151,9 @@ def create_chart(data, years, chart_colours, indicator, limits1, limits2,
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)'
     )
-    if sum(1 for number in data if number < 0) == 0:
-        fig.update_yaxes(type="log")
+    if sum(1 for number in data if number < 0) == 0:    
+        #  chart types https://plotly.com/python/reference/layout/yaxis/#layout-yaxis-type
+        fig.update_yaxes(type="log") # select type of chart - log, linear
     filename = f"{indicator}-{str(uuid.uuid4())}.svg"
     filepath = os.path.join(dirpath, filename)
     fig.write_image(filepath)
